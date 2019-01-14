@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+    
+  
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.6.2/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.6.2/firebaseui.css">
+  <title>Receipt</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='timer.js') }}"></script>
+  
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
+
+</head>
+<body>
+    
+
+<h1>Receipt</h1>
+Name of the product:<input type="text" id="product" placeholder="product"/>
+<br>
+Quantity:<input type="text" id="quantity" placeholder="quantity"/>
+<br>
+Price of the product:<input type="text" id="price" placeholder="price"/><br>
+ 
+<br><button id="addproduct" onclick="addproduct()">Click to  confirm the product</button> <button onclick="finalbill()">Click to see total bill</button> <br> 
+<br>
+<div id="day"></div>
+<div id = "ReceiptTable">
+ <table id="table" border="1" align="center">
+        <tr><th>Product Name</th><th>Quantity</th><th>Price per Unit</th><th>total</th></tr>
+</table>
+<span id="val1">your total bill is <div id="val"></div></span>
+<br>
+<button id="content" onclick="billnumber()">Get Bill Reference</button>
+
+</div>
+<h2>your bill number is <div id="bill"></div></h2>
+
+<br>
+<input id="referencenumber" type="text" value="Bill Number" />
+<br><br>
+<button id="content" onclick="printreceipt()">Take your Receipt</button>
+
+<div id="firebaseui-auth-container"></div><br>
+
+<button id="sign-out" hidden=true>Sign Out</button>
+
+<div id="login-info" hidden=true>
+   
+</div>
+
+<script>
+function billnumber()
+{
+       x = makeid();
+       document.getElementById("referencenumber").value = x;
+       document.getElementById("bill").innerHTML = x;
+       var d = new Date();
+       var e = d.getDate();
+       var f = d.getMonth()+1;
+       var g = d.getFullYear();
+       var h = e +'/'+ f +'/'+ g; 
+       document.getElementById('day').innerHTML=h;
+}
+function makeid()
+{
+var text="";
+var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+for(var i=0;i<5;i++)
+text += possible.charAt(Math.floor(Math.random()*possible.length));
+return text;
+}
+</script>
+<script src="https://www.gstatic.com/firebasejs/5.7.2/firebase.js"></script>
+  
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+ var config = {
+      apiKey: "AIzaSyD4WDfuUUGpCta7D2iJWDt5mc0_99XXYBk",
+      authDomain: "xy18267.firebaseapp.com",
+      databaseURL: "https://xy18267.firebaseio.com",
+      projectId: "xy18267",
+      storageBucket: "xy18267.appspot.com",
+      messagingSenderId: "243504080032"
+    };
+    firebase.initializeApp(config);
+function printreceipt()
+{
+    var referencenumber = document.getElementById('referencenumber').value;
+     var amount = document.getElementById('val').innerHTML;
+     var d = new Date();
+     var e = d.getDate();
+     var f = d.getMonth()+1;
+     var g = d.getFullYear();
+     var h = e +'/'+ f +'/'+ g;      
+     var firebaseRef = firebase.database().ref();
+     firebaseRef.child('referenceNumber').push({number:referencenumber,Amount:amount,Date:h});
+  html2canvas(document.body, {
+    onrendered: function(canvas) {
+      var a = document.createElement('a');
+      a.href = canvas.toDataURL("image/png");
+       var x = document.getElementById("referencenumber").value;
+      a.download = x+'.png';
+      a.click();
+    }
+  });
+}
+
+</script>
+
+<script>
+function addproduct()
+{
+    var newRow = table.insertRow(table.length),
+    cell1 = newRow.insertCell(0),
+    cell2 = newRow.insertCell(1),
+    cell3 = newRow.insertCell(2),
+    cell4 = newRow.insertCell(3),
+    productName = document.getElementById("product").value,
+    quantityAmount = document.getElementById("quantity").value,
+    pricePerUnit = document.getElementById("price").value;
+    var total = quantityAmount * pricePerUnit
+    
+    cell1.innerHTML = productName;
+    cell2.innerHTML = quantityAmount;
+    cell3.innerHTML = pricePerUnit;
+    cell4.innerHTML = +total;    
+    
+    document.getElementById("product").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("price").value = "";            
+}
+function finalbill()
+{
+    var final = document.getElementById("table");
+    total=0;
+    for(i=1;i <final.rows.length;i++)
+    {
+        total = total + parseInt(final.rows[i].cells[3].innerHTML);
+    }
+    document.getElementById("val").innerHTML= total;
+}
+</script>
+
+
+
+</body>
+</html>

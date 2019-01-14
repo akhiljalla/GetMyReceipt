@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    
+  <script src="https://www.gstatic.com/firebasejs/5.7.2/firebase.js"></script>
+  <script>
+  // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyD4WDfuUUGpCta7D2iJWDt5mc0_99XXYBk",
+      authDomain: "xy18267.firebaseapp.com",
+      databaseURL: "https://xy18267.firebaseio.com",
+      projectId: "xy18267",
+      storageBucket: "xy18267.appspot.com",
+      messagingSenderId: "243504080032"
+    };
+   firebase.initializeApp(config);
+  </script>
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.6.2/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.6.2/firebaseui.css">
+  <title>Welcome</title>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+ <h1>Hello {{ user_data['email'] }}</h1>
+<div id="firebaseui-auth-container"></div>
+<button id="sign-out" hidden=true>Sign Out</button>
+
+<div id="login-info" hidden=true>
+  
+  <h2>Login info:</h2>
+  <form method="get" action="/thirdpage/">
+    <button type="submit">Start Making Receipt</button>
+  </form>
+  {% if user_data %}
+    <dl>
+      
+      <dt>Welcome</dt><dd>{{ user_data['email'] }}</dd>
+      <dt>Your login time </dt><dd>
+        {% for time in times %}
+          <p>{{ time['timestamp'] }}</p>
+        {% endfor %} </dd>
+    </dl>
+  {% elif error_message %}
+    <p>Error: {{ error_message }}</p>
+  {% endif %}
+</div>   
+
+</body>
+</html>
